@@ -14,6 +14,9 @@ class UserManager:
         
     def remove_user(self, username):
         if username in self.users:
+
+            connection = self.users[username]
+
             del self.users[username]
             del self.sockets[connection]
         else:
@@ -32,10 +35,7 @@ class UserManager:
             raise ValueError(f"connection '{connection}' does not exist.")
 
     def username_exists(self, username):
-        if username in self.users:
-            return username in self.users
-        else:
-            raise ValueError(f"username '{username}' does not exist.")
+        return username in self.users
         
     def get_all_users(self):
         return list(self.users.keys())
