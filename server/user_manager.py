@@ -1,6 +1,3 @@
-from multiprocessing import connection
-
-
 class UserManager:
     def __init__(self):
         self.users = {}  # Dictionary to store user information
