@@ -54,5 +54,5 @@ class RoomManager:
                 socket.send(message.encode('utf-8'))  # send message to the user
 
     def get_all_rooms(self):
-        return list(self.rooms.keys())  # return a list of all room names
+        return list(self.rooms.keys())  # return all available room names
      
