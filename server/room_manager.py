@@ -1,6 +1,7 @@
 class RoomManager:
     def __init__(self):
         self.rooms = {}  # dictionary to store room information
+        self.rooms["Lobby"] = []  # default room that all users are added to when they connect
 
     def create_room(self, room_name):
         if room_name in self.rooms:
