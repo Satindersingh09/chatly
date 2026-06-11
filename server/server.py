@@ -22,5 +22,13 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(message)s"
 )
+user_manager = UserManager()
+room_manager = RoomManager()
 
+# Function to send messages to clients
+def send(client_socket, message):
+    try:
+        client_socket.send(message.encode("utf-8"))
+    except:
+        pass
 
