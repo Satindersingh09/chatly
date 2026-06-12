@@ -113,4 +113,61 @@ def handle_client(client_socket):
             elif message == "/users":
 
                 users = user_manager.get_all_users()
-                send(client_socket, "Users: " + ", ".join(users))       
+                send(client_socket, "Users: " + ", ".join(users))
+            else:
+
+                rooms = room_manager.get_user_rooms(client_socket, username)
+
+                if not rooms:
+                    send(client_socket, "You are not in any room")
+                    continue
+
+                room_name = rooms[0]
+
+                msg = f"[{room_name}] {username}: {message}"
+
+                room_manager.broadcast_message(
+                    room_name,
+                    msg,
+                    client_socket
+                )
+
+    except Exception as e:
+        print("Error:", e)
+
+    finally:
+
+        if username:
+
+            try:
+                room_manager.remove_user_from_all_rooms(client_socket, username)
+            except:
+                pass
+
+            try:
+                user_manager.remove_user(username)
+            except:
+                pass
+
+            logging.info(f"{username} disconnected")
+
+        client_socket.close()
+
+# Start the server
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind((HOST, PORT))
+server.listen()
+
+print(f"Server running on {HOST}:{PORT}")
+
+while True:
+    client_socket, addr = server.accept()
+
+    print("Connection from", addr)
+
+    thread = threading.Thread(
+        target=handle_client,
+        args=(client_socket,)
+    )
+
+    thread.start()
