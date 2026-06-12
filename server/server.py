@@ -50,3 +50,67 @@ def handle_client(client_socket):
         logging.info(f"{username} connected")
 
         send(client_socket, "Connected to server")
+        while True:
+
+            message = client_socket.recv(BUFFER_SIZE).decode("utf-8").strip()
+
+            if not message:
+                break
+
+            # CREATE ROOM
+            if message.startswith("/create "):
+
+                room_name = message.split(" ", 1)[1]
+
+                try:
+                    room_manager.create_room(room_name)
+
+                    room_manager.remove_user_from_all_rooms(
+                        client_socket,
+                        username
+                    )
+
+                    room_manager.join_room(
+                        room_name,
+                        client_socket,
+                        username
+                    )
+
+                    send(client_socket, f"Room '{room_name}' created and joined")
+
+                except Exception as e:
+                    send(client_socket, str(e))
+
+            # JOIN ROOM
+            elif message.startswith("/join "):
+
+                room_name = message.split(" ", 1)[1]
+
+                try:
+                    room_manager.remove_user_from_all_rooms(
+                        client_socket,
+                        username
+                    )
+
+                    room_manager.join_room(
+                        room_name,
+                        client_socket,
+                        username
+                    )
+
+                    send(client_socket, f"Joined room '{room_name}'")
+
+                except Exception as e:
+                    send(client_socket, str(e))
+
+            # LIST ROOMS
+            elif message == "/rooms":
+
+                rooms = room_manager.get_all_rooms()
+                send(client_socket, "Rooms: " + ", ".join(rooms))
+
+            # LIST USERS
+            elif message == "/users":
+
+                users = user_manager.get_all_users()
+                send(client_socket, "Users: " + ", ".join(users))       
